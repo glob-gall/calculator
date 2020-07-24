@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useCallback } from 'react'
+import {ThemeProvider, DefaultTheme} from 'styled-components'
+
+
+import GlobalStyle from './styles/Global'
+import useThemeStoraged from './utils/useThemeStoraged'
+
+import dark from './styles/themes/dark'
+import light from './styles/themes/light'
+
+
+import {Container, Switch} from './styles/App'
+import Calculator from './components/Calculator'
 
 function App() {
+  const [theme,setTheme] = useThemeStoraged<DefaultTheme>('@calculator:theme',light)
+
+  const toggleTheme = useCallback(()=>{
+    setTheme(theme.title==='light' ? dark : light)
+  },[setTheme,theme.title])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+    <ThemeProvider theme={theme}>
+      <Container>
+        <Calculator/>
+        <Switch
+          onChange={()=>{toggleTheme()}}
+          checked={theme.title==='dark'}
+          checkedIcon={false}
+          uncheckedIcon={false}
+          handleDiameter={34}
+          width={60}
+          height={20}
+          offColor="#303030"
+          onColor="#f0f0f0"
+          offHandleColor="#ff8f00"
+          onHandleColor="#ff8f00"
+        />
+
+      </Container>
+      <GlobalStyle/>
+    </ThemeProvider>
+    </>
+  )
 }
 
 export default App;
