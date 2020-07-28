@@ -1,42 +1,104 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback,useEffect } from 'react';
 
-import { Container } from './styles';
+import { Container,Teste } from './styles';
 
 
 
 const Calculator: React.FC = () => {
 
   const [result,setResult] = useState(0)
-  // const [ac,setAc] = useState(true)
-  // const [calculation,setCalculation] = useState(0)
+  const [calculation,setCalculation] = useState(0)
+  const [screen,setScreen] = useState('0')
+  const [lastOperator,setLastOperator] = useState('')
 
-  // const addToCalculation = useCallback(()=>{
-    
-  // },[])
+  const calculate = useCallback((operator:string)=>{
+
+    if(lastOperator ==='+'){
+      setResult(state=> state + calculation)
+      setScreen(`${result + calculation}${(operator ==='=')?'':operator }`)
+    } 
+    if(lastOperator ==='-'){
+      setResult(state=> state - calculation)
+      setScreen(`${result - calculation}${(operator ==='=')?'':operator }`)
+    } 
+    if(lastOperator ==='*'){
+      setResult(state=> state * calculation)
+      setScreen(`${result * calculation}${(operator ==='=')?'':operator }`)
+    } 
+    if(lastOperator ==='/'){
+      setResult(state=> state / calculation)
+      setScreen(`${result / calculation}${(operator ==='=')?'':operator }`)
+    } 
+    if(lastOperator ===''){
+      setResult(calculation)
+      setScreen(state=>state+operator)
+    }
+    setCalculation(0)
+    setLastOperator(operator)
+  },[calculation, lastOperator, result])
+
+
+  const addToCalculation = useCallback((number:number) => {
+    if(number === -1) return
+
+    setScreen(state=>{
+      return (state==='0') ? number.toString():state+number
+    })
+    setCalculation(state=> {
+      const concatenatedState =''+state+number
+      return parseFloat(concatenatedState)
+    })
+  },[])
+  const reset = useCallback(()=>{
+    setScreen('0')
+    setResult(0)
+    setCalculation(0)
+    setLastOperator('')
+  },[])
 
   return(
+    <>
     <Container>
-      <p>{result}</p>
-      <button className="operator-grey">AC</button>
-      <button className="operator-grey">+/-</button>
+      <p>{screen}</p>
+      <button className="operator-grey" onClick={()=>{reset()}}>AC</button>
+      <button className="operator-grey" onClick={()=>{}}>+/-</button>
       <button className="operator-grey">%</button>
-      <button className="operator-orange">/</button>
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-      <button className="operator-orange">x</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button className="operator-orange">-</button>
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button className="operator-orange">+</button>
-      <button className="zero">0</button>
-      <button>,</button>
-      <button className="operator-orange">=</button>
+      <button 
+        className="operator-orange"
+        onClick={()=>{calculate('/')}}
+      >/</button>
+      <button onClick={()=>addToCalculation(7)}>7</button>
+      <button onClick={()=>addToCalculation(8)}>8</button>
+      <button onClick={()=>addToCalculation(9)}>9</button>
+      <button 
+        className="operator-orange"
+        onClick={()=>{calculate('*')}}
+      >x</button>
+      <button onClick={()=>addToCalculation(4)}>4</button>
+      <button onClick={()=>addToCalculation(5)}>5</button>
+      <button onClick={()=>addToCalculation(6)}>6</button>
+      <button 
+        className="operator-orange"
+        onClick={()=>{calculate('-')}}
+      >-</button>
+      <button onClick={()=>addToCalculation(1)}>1</button>
+      <button onClick={()=>addToCalculation(2)}>2</button>
+      <button onClick={()=>addToCalculation(3)}>3</button>
+      <button 
+        className="operator-orange"
+        onClick={()=>{calculate('+')}}
+      >+</button>
+      <button className="zero" onClick={()=>addToCalculation(0)}>0</button>
+      <button onClick={()=>addToCalculation(-1)}>,</button>
+      <button className="operator-orange" onClick={()=>{calculate('=')}}>=</button>
     </Container>
+    <Teste>
+      <p>result:{result}</p>
+      <p>screen:{screen}</p>
+      <p>calculation:{calculation}</p>
+      <p>lastoperator:{lastOperator}</p>
+    </Teste>
+    </>
   ) 
 }
 

@@ -50,3 +50,7 @@ export const Container = styled.div`
 
   }
 `
+export const Teste = styled.div`
+margin-top:50px;
+  color:#fff;
+`
