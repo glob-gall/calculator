@@ -1,4 +1,4 @@
-import React, { useState, useCallback,useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Container,Teste } from './styles';
 
@@ -9,6 +9,7 @@ const Calculator: React.FC = () => {
   const [result,setResult] = useState(0)
   const [calculation,setCalculation] = useState(0)
   const [screen,setScreen] = useState('0')
+  const [isNegative,setIsNegative] = useState(false)
   const [lastOperator,setLastOperator] = useState('')
 
   const calculate = useCallback((operator:string)=>{
@@ -34,8 +35,25 @@ const Calculator: React.FC = () => {
       setScreen(state=>state+operator)
     }
     setCalculation(0)
-    setLastOperator(operator)
+
+    if(operator !== '=')  setLastOperator(operator)
   },[calculation, lastOperator, result])
+
+
+
+  const invertNumber = useCallback(()=>{
+      setIsNegative(state=> !state)
+      if(!isNegative){
+        setScreen(state=>`-${state}`)
+        setCalculation(-parseInt(screen))
+      }else{
+        const positive = screen.replace(/-/,'')
+        setScreen(positive)
+        setCalculation(state=>-state)
+      }
+    
+  },[isNegative, screen])
+
 
 
   const addToCalculation = useCallback((number:number) => {
@@ -56,12 +74,19 @@ const Calculator: React.FC = () => {
     setLastOperator('')
   },[])
 
+
+
   return(
     <>
     <Container>
       <p>{screen}</p>
       <button className="operator-grey" onClick={()=>{reset()}}>AC</button>
-      <button className="operator-grey" onClick={()=>{}}>+/-</button>
+      <button 
+      className="operator-grey" 
+      onClick={()=>{invertNumber()}}
+      >
+        +/-
+      </button>
       <button className="operator-grey">%</button>
       <button 
         className="operator-orange"
@@ -73,7 +98,9 @@ const Calculator: React.FC = () => {
       <button 
         className="operator-orange"
         onClick={()=>{calculate('*')}}
-      >x</button>
+      >
+        x
+      </button>
       <button onClick={()=>addToCalculation(4)}>4</button>
       <button onClick={()=>addToCalculation(5)}>5</button>
       <button onClick={()=>addToCalculation(6)}>6</button>
